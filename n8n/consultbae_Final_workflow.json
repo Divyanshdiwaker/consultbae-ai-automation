@@ -2,58 +2,6 @@
   "name": "My workflow",
   "nodes": [
     {
-      "parameters": {},
-      "type": "n8n-nodes-base.manualTrigger",
-      "typeVersion": 1,
-      "position": [
-        0,
-        0
-      ],
-      "id": "19c5c214-a31d-4fdc-89d0-8b5c513eec42",
-      "name": "When clicking ‘Execute workflow’"
-    },
-    {
-      "parameters": {
-        "assignments": {
-          "assignments": [
-            {
-              "id": "97ec2e79-2650-4d0e-905f-2dc2e554c53f",
-              "name": "full_name",
-              "value": "Aman TestUser",
-              "type": "string"
-            },
-            {
-              "id": "e456e6a9-524d-4abb-ad2c-cbccf64928d2",
-              "name": "email",
-              "value": "aman.test2026@example.com",
-              "type": "string"
-            },
-            {
-              "id": "75ddf982-1c6b-4775-b7b3-ac4f1960d43d",
-              "name": "phone",
-              "value": "9000000789",
-              "type": "string"
-            },
-            {
-              "id": "83211977-6cfb-42ed-a521-fad8e14eda12",
-              "name": "city",
-              "value": "Delhi",
-              "type": "string"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [
-        208,
-        0
-      ],
-      "id": "e5788b6a-92ed-418f-9ff5-e25524f3e45d",
-      "name": "Edit Fields"
-    },
-    {
       "parameters": {
         "url": "http://127.0.0.1:8000/people/lookup",
         "sendQuery": true,
@@ -121,7 +69,7 @@
         "url": "http://127.0.0.1:8000/people",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"full_name\": \"{{ $('Edit Fields').item.json.full_name }}\",\n  \"email\": \"{{ $('Edit Fields').item.json.email }}\",\n  \"phone\": \"{{ $('Edit Fields').item.json.phone }}\",\n  \"city\": \"{{ $('Edit Fields').item.json.city }}\"\n}",
+        "jsonBody": "={\n  \"full_name\": \"{{ $('Extract from File').item.json.full_name }}\",\n  \"email\": \"{{ $('Extract from File').item.json.email }}\",\n  \"phone\": \"{{ $('Extract from File').item.json.phone }}\",\n  \"city\": \"{{ $('Extract from File').item.json.city }}\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -223,7 +171,7 @@
         "url": "https://webhook.site/58428a59-bb19-4031-9ae4-ae235b4233d0",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={\n  \"alert_type\": \"duplicate_person\",\n  \"status\": \"existing_person\",\n  \"person_id\": \"{{ $json.person_id }}\",\n  \"person_name\": \"{{ $('Edit Fields').item.json.full_name }}\",\n  \"match_method\": \"{{ $json.match_method }}\",\n  \"confidence\": \"{{ $json.confidence }}\",\n  \"message\": \"Duplicate person detected in ConsultBae database.\"\n}",
+        "jsonBody": "={\n  \"alert_type\": \"duplicate_person\",\n  \"status\": \"existing_person\",\n  \"person_id\": \"{{ $json.person_id }}\",\n  \"person_name\": \"{{ $('Extract from File').item.json.full_name }}\",\n  \"match_method\": \"{{ $json.match_method }}\",\n  \"confidence\": \"{{ $json.confidence }}\",\n  \"message\": \"Duplicate person detected in ConsultBae database.\"\n}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
@@ -234,32 +182,72 @@
       ],
       "id": "79890f26-7a14-4411-be3e-18b49a5e6e19",
       "name": "HTTP Request duplicate alert"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        192,
+        0
+      ],
+      "id": "890221bf-e426-472c-a5e5-467ccd3b65d1",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "consultbae-csv",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -48,
+        0
+      ],
+      "id": "632ca4e0-8231-4b1c-9081-fe68ca4efd31",
+      "name": "Webhook1",
+      "webhookId": "c5a5533c-3d6f-404e-b25f-864c2e9d8eb8"
     }
   ],
-  "pinData": {},
+  "pinData": {
+    "Webhook1": [
+      {
+        "json": {
+          "headers": {
+            "host": "localhost:5678",
+            "user-agent": "curl/8.21.0",
+            "accept": "*/*",
+            "content-length": "369",
+            "content-type": "multipart/form-data; boundary=------------------------cbimu91IKcnTIdXQRU02oM"
+          },
+          "params": {},
+          "query": {},
+          "body": {},
+          "webhookUrl": "http://localhost:5678/webhook-test/consultbae-csv",
+          "executionMode": "test"
+        },
+        "binary": {
+          "data": {
+            "mimeType": "application/octet-stream",
+            "fileExtension": "bin",
+            "data": "filesystem-v2",
+            "fileName": "demo_people.csv",
+            "id": "filesystem-v2:workflows/vXiI2Y06PyLHHVEg/executions/temp/binary_data/af6d7140-af80-4938-941c-8a899f24bdcb",
+            "fileSize": "150 B",
+            "bytes": 150
+          }
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
   "connections": {
-    "When clicking ‘Execute workflow’": {
-      "main": [
-        [
-          {
-            "node": "Edit Fields",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Edit Fields": {
-      "main": [
-        [
-          {
-            "node": "HTTP Request",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "HTTP Request": {
       "main": [
         [
@@ -310,15 +298,37 @@
           }
         ]
       ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "dd23b8b8-2a67-40c5-9840-911b5bcdd300",
+  "versionId": "9c4b3747-b240-4aaf-8c36-a141501a156d",
   "meta": {
     "instanceId": "d2eb59e6357c018db5c2c0e96e97d61e27e28f9adaab06531d68a16496e9bf80"
   },
