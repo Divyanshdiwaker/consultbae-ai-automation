@@ -119,7 +119,7 @@ to create the new person.
 
 The exported workflow is:
 
-`n8n/consultbae_duplicate_alert.json`
+`n8n/consultbae_Final_workflow.json`
 
 The assignment specifically requires the n8n workflow to be exported into the repository.
 
