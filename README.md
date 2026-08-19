@@ -479,3 +479,33 @@ The project now includes:
 - Audio submission storage
 - Internal submission review and playback
 - Scaling analysis for a larger deployment
+
+## Stuck log
+
+### 1. Fixing the malformed CSV row
+
+One row in the Gig Workers CSV had values shifted into the wrong columns. At first, the CSV was loading without an obvious parsing error, but the values did not make sense. For example, the email field contained skills and another field contained the email.
+
+I checked the row manually, figured out the pattern, and added a small condition in the ingestion code to detect this specific case and put the values back into the correct fields.
+
+I used AI to help me think through how to detect the problem without changing valid rows. I rejected the idea of shifting every suspicious row because that could create new errors.
+
+### 2. Pipeline creating duplicate source records
+
+After getting the pipeline working, I ran it again to make sure it was safe to rerun. I noticed that `source_records` went from 104 to 208.
+
+I checked where the extra rows were coming from and found that the same source records were being inserted again every time the pipeline ran.
+
+I changed the logic so each source record is identified by `source_name + source_row_number`. After that, I tested the pipeline multiple times and the count stayed at 104.
+
+I used AI to understand the idea of idempotent ingestion. I did not solve this by deleting and recreating the whole database on every run because that would hide the actual problem.
+
+### 3. Building the n8n CSV workflow
+
+n8n was completely new to me. I first made the lookup, IF, duplicate alert, and create-person parts work using manually entered data.
+
+Later I realized that for the assignment I should demonstrate a real CSV-based workflow, so I changed the input to a Webhook and added `Extract from File`.
+
+The hardest part was understanding how the data from the CSV moves through each node and how expressions like `$json.email` work. I used the n8n interface/documentation and AI to understand the nodes and expressions, then tested the workflow one part at a time.
+
+I kept the FastAPI layer instead of connecting n8n directly to SQLite because the matching logic was already working there. I also kept the existing lookup and branch logic instead of rebuilding the whole workflow.
