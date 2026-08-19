@@ -1,0 +1,327 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "19c5c214-a31d-4fdc-89d0-8b5c513eec42",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "97ec2e79-2650-4d0e-905f-2dc2e554c53f",
+              "name": "full_name",
+              "value": "Aman TestUser",
+              "type": "string"
+            },
+            {
+              "id": "e456e6a9-524d-4abb-ad2c-cbccf64928d2",
+              "name": "email",
+              "value": "aman.test2026@example.com",
+              "type": "string"
+            },
+            {
+              "id": "75ddf982-1c6b-4775-b7b3-ac4f1960d43d",
+              "name": "phone",
+              "value": "9000000789",
+              "type": "string"
+            },
+            {
+              "id": "83211977-6cfb-42ed-a521-fad8e14eda12",
+              "name": "city",
+              "value": "Delhi",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e5788b6a-92ed-418f-9ff5-e25524f3e45d",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "http://127.0.0.1:8000/people/lookup",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "email",
+              "value": "={{ $json.email }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $json.phone }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        416,
+        0
+      ],
+      "id": "da8eeade-4150-471e-89ac-2907689d5ec0",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b37d8510-7757-4a74-9ec4-71b934756d9c",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "5e3e2047-e86b-4b1a-bf0b-47c695727f0f",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8000/people",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"full_name\": \"{{ $('Edit Fields').item.json.full_name }}\",\n  \"email\": \"{{ $('Edit Fields').item.json.email }}\",\n  \"phone\": \"{{ $('Edit Fields').item.json.phone }}\",\n  \"city\": \"{{ $('Edit Fields').item.json.city }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        832,
+        96
+      ],
+      "id": "0996abd0-be2f-4890-8ddd-b9fa51c61c80",
+      "name": "HTTP Request1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e1b4c439-e420-4442-a040-1f16c0555be8",
+              "name": "status",
+              "value": "existing_person",
+              "type": "string"
+            },
+            {
+              "id": "aa350b47-4469-4087-8692-51f8df745a61",
+              "name": "person_id",
+              "value": "={{ $json.person.person_id }}",
+              "type": "number"
+            },
+            {
+              "id": "80ff41cf-6728-487f-9e9c-ddfb330db2d0",
+              "name": "match_method",
+              "value": "={{ $json.match_method }}",
+              "type": "string"
+            },
+            {
+              "id": "db5ccfe4-2437-4809-bee3-68e262cc5a39",
+              "name": "confidence",
+              "value": "={{ $json.confidence }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        -96
+      ],
+      "id": "c9958be6-947a-4d78-b2fc-fe8e13c255b0",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f5b2b8ec-967a-4379-b421-877d31821fd2",
+              "name": "status",
+              "value": "created_person",
+              "type": "string"
+            },
+            {
+              "id": "b978b886-cd1d-4d88-8ec3-b395fa40f3a5",
+              "name": "person_id",
+              "value": "={{ $json.person.person_id }}",
+              "type": "number"
+            },
+            {
+              "id": "476540b6-162b-46bb-ba4e-e309d22be6da",
+              "name": "match_method",
+              "value": "new_person",
+              "type": "string"
+            },
+            {
+              "id": "09aabcc7-8e1f-4f97-bdbe-ef195346836b",
+              "name": "confidence",
+              "value": 0,
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1040,
+        96
+      ],
+      "id": "ec96792d-cce1-45c3-983a-ddde2ad83f00",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://webhook.site/58428a59-bb19-4031-9ae4-ae235b4233d0",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"alert_type\": \"duplicate_person\",\n  \"status\": \"existing_person\",\n  \"person_id\": \"{{ $json.person_id }}\",\n  \"person_name\": \"{{ $('Edit Fields').item.json.full_name }}\",\n  \"match_method\": \"{{ $json.match_method }}\",\n  \"confidence\": \"{{ $json.confidence }}\",\n  \"message\": \"Duplicate person detected in ConsultBae database.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1040,
+        -96
+      ],
+      "id": "79890f26-7a14-4411-be3e-18b49a5e6e19",
+      "name": "HTTP Request duplicate alert"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request duplicate alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "dd23b8b8-2a67-40c5-9840-911b5bcdd300",
+  "meta": {
+    "instanceId": "d2eb59e6357c018db5c2c0e96e97d61e27e28f9adaab06531d68a16496e9bf80"
+  },
+  "id": "vXiI2Y06PyLHHVEg",
+  "tags": []
+}
