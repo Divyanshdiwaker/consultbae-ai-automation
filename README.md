@@ -167,7 +167,7 @@ consultbae-ai-automation/
 │   └── source3_cbnexus_contacts.csv
 │
 ├── n8n/
-│   └── consultbae_duplicate_alert.json
+│   └── consultbae_Final_workflow.json
 │
 ├── reports/
 │   └── SCALING_ANALYSIS.md
@@ -195,7 +195,7 @@ consultbae-ai-automation/
 ### 1. Clone the repository
 
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/Divyanshdiwaker/consultbae-ai-automation
 cd consultbae-ai-automation
 ```
 
